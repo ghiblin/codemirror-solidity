@@ -1,7 +1,7 @@
 import { javascript } from "@codemirror/lang-javascript";
 import { solidity } from "@replit/codemirror-lang-solidity";
 import CodeMirror from '@uiw/react-codemirror'
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const SOL_SNIPPET = `
 pragma solidity ^0.8.10;
@@ -49,6 +49,10 @@ const files = [
 function App() {
   const [theme, setTheme] = useState('dark')
   const [currentFile, setCurrentFile] = useState(files[0])
+  const saveChanges = useCallback((content) => {
+    const file = files.find(file => file.name === currentFile.name);
+    file.content = content;
+  }, [currentFile])
 
   return (
     <div>
@@ -68,6 +72,7 @@ function App() {
         extensions={currentFile.language === 'solidity' ? [solidity] : [javascript({ jsx: false })]}
         height={'100%'}
         theme={theme}
+        onChange={saveChanges}
       />
     </div>
   );
