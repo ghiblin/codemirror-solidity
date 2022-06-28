@@ -1,8 +1,9 @@
+import { javascript } from "@codemirror/lang-javascript";
 import { solidity } from "@replit/codemirror-lang-solidity";
 import CodeMirror from '@uiw/react-codemirror'
 import { useState } from "react";
 
-const doc = `
+const SOL_SNIPPET = `
 pragma solidity ^0.8.10;
 
 contract EtherWallet {
@@ -25,8 +26,29 @@ contract EtherWallet {
 }
 `
 
+const JS_SNIPPET = `
+const sayHello = (name = 'world') => {
+  return \`Hello $\{name}!\`;
+}
+console.log(sayHello());
+`
+
+const files = [
+  {
+    name: 'EtherWallet.sol',
+    language: 'solidity',
+    content: SOL_SNIPPET.toString()
+  },
+  {
+    name: 'Javascript.js',
+    language: 'javascript',
+    content: JS_SNIPPET.toString()
+  }
+]
+
 function App() {
   const [theme, setTheme] = useState('dark')
+  const [currentFile, setCurrentFile] = useState(files[0])
 
   return (
     <div>
@@ -36,9 +58,14 @@ function App() {
           {theme === 'dark' ? <button onClick={() => setTheme('light')}>Light</button> : <button onClick={() => setTheme('dark')}>Dark</button>}
         </div>
       </h1>
+      <div>
+        {files.map((file, idx) => (
+          <button key={idx} onClick={() => setCurrentFile(file)}>{file.name}</button>
+        ))}
+      </div>
       <CodeMirror
-        value={doc}
-        extensions={[solidity]}
+        value={currentFile.content}
+        extensions={currentFile.language === 'solidity' ? [solidity] : [javascript({ jsx: false })]}
         height={'100%'}
         theme={theme}
       />
