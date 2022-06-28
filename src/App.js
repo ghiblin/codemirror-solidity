@@ -1,7 +1,6 @@
-import { EditorState } from "@codemirror/state";
 import { solidity } from "@replit/codemirror-lang-solidity";
-import { basicSetup, EditorView } from "codemirror";
-import { useEffect, useRef } from "react";
+import CodeMirror from '@uiw/react-codemirror'
+import { useState } from "react";
 
 const doc = `
 pragma solidity ^0.8.10;
@@ -27,29 +26,22 @@ contract EtherWallet {
 `
 
 function App() {
-  const editor = useRef();
-
-  useEffect(() => {
-    console.log('create new EditorView...')
-    const view = new EditorView({
-      state: EditorState.create({
-        doc,
-        extensions: [
-          basicSetup,
-          solidity
-        ]
-      }),
-      parent: editor.current
-    })
-    return () => {
-      view.destroy();
-    }
-  }, []);
+  const [theme, setTheme] = useState('dark')
 
   return (
     <div>
-      <h1>CodeMirror with solidity</h1>
-      <div ref={editor}></div>
+      <h1 style={{ position: 'relative' }}>
+        CodeMirror with solidity
+        <div style={{ position: 'absolute', right: 0, top: 0 }}>
+          {theme === 'dark' ? <button onClick={() => setTheme('light')}>Light</button> : <button onClick={() => setTheme('dark')}>Dark</button>}
+        </div>
+      </h1>
+      <CodeMirror
+        value={doc}
+        extensions={[solidity]}
+        height={'100%'}
+        theme={theme}
+      />
     </div>
   );
 }
